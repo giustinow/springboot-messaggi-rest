@@ -1,6 +1,5 @@
 package it.dstech.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,16 +18,6 @@ public class MessaggioServiceDAOImpl implements MessaggioServiceDAO {
 	@Autowired
 	private PersonaRepository personaRepo;
 
-	@Override
-	public boolean addMessage(Messaggio m) {
-		m.setDateTime(LocalDateTime.now());
-		Messaggio messaggio = messaggioRepo.save(m);
-		Persona mittente = personaRepo.findPersonaByID(m.getMittente().getNickname());
-		mittente.getMessaggi().add(messaggio);
-		Persona destinatario = personaRepo.findPersonaByID(m.getDestinatario().getNickname());
-		destinatario.getMessaggi().add(messaggio);
-		return true;
-	}
 
 	@Override
 	public List<Messaggio> findAll() {
@@ -50,7 +39,8 @@ public class MessaggioServiceDAOImpl implements MessaggioServiceDAO {
 				if (messaggio.getMittente().equals(persona)) {
 					sent.add(messaggio);
 				}
-			}return sent;
+			}
+			return sent;
 		} else {
 			List<Messaggio> received = new ArrayList<Messaggio>();
 			for (Messaggio messaggio : persona.getMessaggi()) {

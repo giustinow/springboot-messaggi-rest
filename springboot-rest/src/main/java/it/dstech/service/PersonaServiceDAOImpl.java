@@ -1,5 +1,6 @@
 package it.dstech.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,33 +8,57 @@ import org.springframework.stereotype.Service;
 
 import it.dstech.model.Messaggio;
 import it.dstech.model.Persona;
+import it.dstech.repository.MessaggioRepository;
 import it.dstech.repository.PersonaRepository;
 
 @Service
 public class PersonaServiceDAOImpl implements PersonaServiceDAO {
 	@Autowired
-	private PersonaRepository repo;
+	private PersonaRepository personaRepo;
+	
+	@Autowired
+	private MessaggioRepository messaggioRepo;
+
+	@Override
+	public boolean addMessage(Messaggio m) {
+		Persona mittente = personaRepo.findPersonaByID(m.getMittente().getNickname());
+		Persona destinatario = personaRepo.findPersonaByID(m.getDestinatario().getNickname());
+		LocalDateTime now = LocalDateTime.now();
+		m.setDateTime(now);
+		m.setDestinatario(destinatario);
+		messaggioRepo.save(m);
+		mittente.getMessaggi().add(m);
+		personaRepo.save(mittente);
+		Messaggio duplicato = new Messaggio();
+		duplicato.setTipo(!m.isTipo());
+		duplicato.setDestinatario(mittente);
+		duplicato.setDateTime(now);
+		duplicato.setMessage(m.getMessage());
+		destinatario.getMessaggi().add(duplicato);
+		personaRepo.save(destinatario);
+		return true;
+	}
 
 	@Override
 	public boolean add(Persona p) {
-		Persona save = repo.save(p);
+		Persona save = personaRepo.save(p);
 		return save != null;
 	}
 
 	@Override
 	public List<Persona> findAll() {
-		return repo.findAll();
+		return personaRepo.findAll();
 	}
 
 	@Override
 	public void remove(Persona p) {
-		repo.delete(p);
+		personaRepo.delete(p);
 		
 	}
 
 	@Override
 	public boolean findPersona(String p) {
-		if(repo.findById(p) != null) {
+		if(personaRepo.findById(p) != null) {
 			return true;			
 		}return false;
 	}
@@ -50,7 +75,7 @@ public class PersonaServiceDAOImpl implements PersonaServiceDAO {
 
 	@Override
 	public Persona findPersonaById(String nickname) {
-		return repo.findPersonaByID(nickname);
+		return personaRepo.findPersonaByID(nickname);
 	}
 
 }

@@ -7,7 +7,6 @@ import it.dstech.model.Persona;
 
 public interface MessaggioServiceDAO {
 
-	boolean addMessage(Messaggio messaggio);
 	
 	List<Messaggio> findAll();
 	

@@ -7,6 +7,8 @@ import it.dstech.model.Persona;
 
 public interface PersonaServiceDAO {
 	
+	boolean addMessage(Messaggio messaggio); 
+	
 	Persona findPersonaById(String nickname);
 	
 	boolean findPersona(String p);

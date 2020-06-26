@@ -11,6 +11,8 @@ import javax.persistence.Table;
 
 import org.springframework.lang.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Table(name = "persona")
@@ -21,6 +23,7 @@ public class Persona {
 	private String nickname;
 	private String nome;
 	private String cognome;
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.EAGER)
 	private List<Messaggio> messaggi;
 
